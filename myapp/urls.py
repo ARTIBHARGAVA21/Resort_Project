@@ -31,6 +31,9 @@ urlpatterns = [
     
     
     path('search/', SearchAPIView.as_view(), name='hotel-search'),
+    
+    path("book-resort/", BookingAPIView.as_view(), name="book-resort"),
+    path('hotels/<int:id>/map/', HotelMapLinkAPIView.as_view(), name='hotel-map-link'),
      
      
      

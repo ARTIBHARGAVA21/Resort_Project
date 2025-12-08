@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from .models import Hotel
+from .models import Hotel, Room
 from .serializers import*
 from django.db.models import Q
 
@@ -411,3 +411,27 @@ class SearchAPIView(APIView):
             "query": query,
             "results": serializer.data
         })
+
+
+
+
+class BookingAPIView(APIView):
+    def post(self, request):
+        serializer = BookingSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "message": "Booking submitted successfully!",
+                "data": serializer.data
+            }, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class HotelMapLinkAPIView(APIView):
+    def get(self, request, id):
+        hotel = get_object_or_404(Hotel, id=id)
+        query = urllib.parse.quote(hotel.location)
+        map_url = f"https://www.google.com/maps/search/?api=1&query={query}"
+        return Response({"id": hotel.id, "name": hotel.name, "map_url": map_url})
